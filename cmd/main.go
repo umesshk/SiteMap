@@ -1,7 +1,25 @@
 package main
 
-import "fmt"
+import (
+	"flag"
+	"fmt"
+	"os"
+
+	"github.com/umesshk/SiteMap/builder"
+)
 
 func main() {
-	fmt.Println("Hellow Dewds")
+
+	page_url := flag.String("link", "google.com", "Provide the url of page you want to build site map")
+	flag.Parse()
+
+	if *page_url == "" {
+		fmt.Println("Please Provide a URL")
+		os.Exit(-1)
+
+	}
+	fmt.Println("Building Map...")
+
+	builder.BuildSiteMap(*page_url)
+
 }
