@@ -1,12 +1,11 @@
 package builder
 
 import (
-	"io"
 	"net/http"
 	"strings"
 )
 
-func GetPage(link string) io.ReadCloser {
+func GetPage(link string) *http.Response {
 
 	if !strings.HasPrefix(link, "https://") {
 		link = "https://" + link
@@ -17,6 +16,6 @@ func GetPage(link string) io.ReadCloser {
 		panic(err)
 	}
 
-	return resp.Body
+	return resp
 
 }
