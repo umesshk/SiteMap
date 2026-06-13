@@ -1,14 +1,13 @@
 package builder
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 
 	"github.com/umesshk/html-parser/parser"
 )
 
-func ParseLinks(link string, max_depth int) {
+func ParseLinks(link string) []string {
 
 	page_response := GetPage(link)
 	defer page_response.Body.Close()
@@ -27,11 +26,7 @@ func ParseLinks(link string, max_depth int) {
 
 	page_links := filterLinks(fomatted_links, keepLink(base))
 
-	fmt.Println("\nFound URLS ....")
-
-	for i, u := range page_links {
-		fmt.Printf("%d. %s \n", i+1, u)
-	}
+	return page_links
 
 }
 
@@ -42,6 +37,9 @@ func formatLinks(parsed_links []parser.Link, base string) []string {
 	for _, p := range parsed_links {
 
 		switch {
+		case strings.HasPrefix(p.Href, "mailto"):
+			continue
+
 		case strings.HasPrefix(p.Href, "/"):
 
 			page_links = append(page_links, base+p.Href)
@@ -52,6 +50,9 @@ func formatLinks(parsed_links []parser.Link, base string) []string {
 		case p.Href != " " && !strings.HasPrefix(p.Href, "#"):
 			page_links = append(page_links, base+"/"+p.Href)
 
+		case strings.HasSuffix(p.Href, "/index.html"):
+			trimmed_link := strings.TrimSuffix(p.Href, "/index.html") + "/"
+			page_links = append(page_links, trimmed_link)
 		}
 
 	}

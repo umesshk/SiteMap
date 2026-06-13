@@ -22,6 +22,6 @@ func main() {
 	}
 	fmt.Println("Building Map...")
 
-	builder.ParseLinks(*page_url, *max_depth)
+	builder.BuildMap(*page_url, *max_depth)
 
 }
