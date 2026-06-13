@@ -1,11 +1,13 @@
 package builder
 
-import "fmt"
-
-func BuildMap(page_link string, maxDepth int) {
+func BuildMap(page_link string, maxDepth int) map[string][]string {
 
 	linksMap := make(map[string][]string)
 	linksSeen := make(map[string]struct{})
+
+	linkDiscoverd := map[string]struct{}{
+		page_link: struct{}{},
+	}
 
 	q := make(map[string]struct{})
 	nq := map[string]struct{}{
@@ -17,25 +19,24 @@ func BuildMap(page_link string, maxDepth int) {
 		q, nq = nq, make(map[string]struct{})
 		for link, _ := range q {
 
-			if _, ok := linksSeen[link]; !ok {
-
-				linksSeen[link] = struct{}{}
-				curr_link := link
-
-				for _, l := range ParseLinks(link) {
-					linksMap[curr_link] = append(linksMap[curr_link], l)
-					nq[l] = struct{}{}
-				}
-
+			if _, ok := linksSeen[link]; ok {
+				continue
 			}
+
+			linksSeen[link] = struct{}{}
+			curr_link := link
+
+			for _, l := range ParseLinks(link) {
+				linksMap[curr_link] = append(linksMap[curr_link], l)
+				if _, ok := linkDiscoverd[l]; ok {
+					continue
+				}
+				linkDiscoverd[l] = struct{}{}
+				nq[l] = struct{}{}
+			}
+
 		}
 	}
 
-	for k, v := range linksMap {
-		fmt.Println(k)
-		for _, l := range v {
-			fmt.Println("-->", l)
-		}
-	}
-
+	return linksMap
 }
