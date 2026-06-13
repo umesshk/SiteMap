@@ -8,13 +8,12 @@ import (
 	"github.com/umesshk/html-parser/parser"
 )
 
-func BuildSiteMap(link string) {
+func ParseLinks(link string, max_depth int) {
+
 	page_response := GetPage(link)
 	defer page_response.Body.Close()
 
-	parserd_links := parser.ParseHtml(page_response.Body)
-
-	var links []string
+	parsed_links := parser.ParseHtml(page_response.Body)
 
 	reqUrl := page_response.Request.URL
 
@@ -24,21 +23,57 @@ func BuildSiteMap(link string) {
 	}
 
 	base := baseUrl.String()
-	for _, p := range parserd_links {
+	fomatted_links := formatLinks(parsed_links, base)
 
-		switch {
-		case strings.HasPrefix(p.Href, "/"):
-			links = append(links, base+p.Href)
-
-		case strings.HasPrefix(p.Href, "/http"):
-			links = append(links, p.Href)
-		}
-	}
+	page_links := filterLinks(fomatted_links, keepLink(base))
 
 	fmt.Println("\nFound URLS ....")
 
-	for i, u := range links {
+	for i, u := range page_links {
 		fmt.Printf("%d. %s \n", i+1, u)
 	}
 
+}
+
+func formatLinks(parsed_links []parser.Link, base string) []string {
+
+	var page_links []string
+
+	for _, p := range parsed_links {
+
+		switch {
+		case strings.HasPrefix(p.Href, "/"):
+
+			page_links = append(page_links, base+p.Href)
+
+		case strings.HasPrefix(p.Href, "http"):
+			page_links = append(page_links, p.Href)
+
+		case p.Href != " " && !strings.HasPrefix(p.Href, "#"):
+			page_links = append(page_links, base+"/"+p.Href)
+
+		}
+
+	}
+
+	return page_links
+
+}
+
+func filterLinks(parsed_links []string, keepLink func(string) bool) []string {
+
+	var valid_links []string
+
+	for _, l := range parsed_links {
+		if keepLink(l) {
+			valid_links = append(valid_links, l)
+		}
+	}
+	return valid_links
+}
+
+func keepLink(prefix string) func(string) bool {
+	return func(link string) bool {
+		return strings.HasPrefix(link, prefix)
+	}
 }
