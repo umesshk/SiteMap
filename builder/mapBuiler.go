@@ -6,10 +6,10 @@ func BuildMap(page_link string, maxDepth int) []string {
 
 	q := make(map[string]struct{})
 	nq := map[string]struct{}{
-		page_link: struct{}{},
+		page_link: {},
 	}
 
-	for i := 0; i < maxDepth; i++ {
+	for i := 0; i <= maxDepth; i++ {
 
 		q, nq = nq, make(map[string]struct{})
 
@@ -17,7 +17,7 @@ func BuildMap(page_link string, maxDepth int) []string {
 			break
 		}
 
-		for link, _ := range q {
+		for link := range q {
 
 			if _, ok := linksSeen[link]; ok {
 				continue
@@ -33,8 +33,7 @@ func BuildMap(page_link string, maxDepth int) []string {
 	}
 
 	seen_links := make([]string, 0, len(linksSeen))
-
-	for l, _ := range linksSeen {
+	for l := range linksSeen {
 		seen_links = append(seen_links, l)
 	}
 

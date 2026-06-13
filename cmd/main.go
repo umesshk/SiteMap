@@ -11,7 +11,7 @@ import (
 func main() {
 
 	page_url := flag.String("link", "google.com", "Provide the url of page you want to build site map")
-	max_depth := flag.Int("depth", 3, "provide max depth of links to follow from a  page ")
+	max_depth := flag.Int("depth", 1, "provide max depth of links to follow from a  page ")
 
 	flag.Parse()
 
@@ -20,10 +20,8 @@ func main() {
 		os.Exit(-1)
 
 	}
-	fmt.Println("Building Site Map...")
-
 	links := builder.BuildMap(*page_url, *max_depth)
 
-	fmt.Printf("\nSite Map of depth %d for %s\n", *max_depth, *page_url)
+	builder.GenerateXML(links)
 
 }
