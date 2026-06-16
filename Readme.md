@@ -83,7 +83,3 @@ SiteMap/
 └── README.md
 ```
 
-## Future Improvements
-
-* XML sitemap generation.
-* Better URL normalization.
