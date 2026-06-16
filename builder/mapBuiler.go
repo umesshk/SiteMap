@@ -1,6 +1,10 @@
 package builder
 
+import "fmt"
+
 func BuildMap(page_link string, maxDepth int) []string {
+
+	fmt.Println("Building Map...")
 
 	linksSeen := make(map[string]struct{})
 
@@ -25,6 +29,7 @@ func BuildMap(page_link string, maxDepth int) []string {
 
 			linksSeen[link] = struct{}{}
 
+			fmt.Println("Processing Link...", link)
 			for _, l := range ParseLinks(link) {
 				nq[l] = struct{}{}
 			}

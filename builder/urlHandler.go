@@ -1,6 +1,7 @@
 package builder
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -25,6 +26,12 @@ func ParseLinks(link string) []string {
 	fomatted_links := formatLinks(parsed_links, base)
 
 	page_links := filterLinks(fomatted_links, keepLink(base))
+
+	fmt.Println("Parsed Links ")
+
+	for i, l := range page_links {
+		fmt.Printf("%d. %s\n", i+1, l)
+	}
 
 	return page_links
 

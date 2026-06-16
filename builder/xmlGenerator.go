@@ -3,7 +3,9 @@ package builder
 import (
 	"encoding/xml"
 	"fmt"
+	"log"
 	"os"
+	"path/filepath"
 )
 
 const xmlns = "http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -19,6 +21,8 @@ type urlSet struct {
 
 func GenerateXML(links []string) {
 
+	fmt.Println("Generating XML")
+
 	xml_urls := urlSet{
 		Xmlns: xmlns,
 	}
@@ -27,13 +31,28 @@ func GenerateXML(links []string) {
 		xml_urls.Urls = append(xml_urls.Urls, loc{l})
 	}
 
-	fmt.Printf(xml.Header)
-	ec := xml.NewEncoder(os.Stdout)
+	rootDir, err := os.Getwd()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	file_path := filepath.Join(rootDir, "sitemap.xml")
+
+	file, err := os.Create(file_path)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	file.WriteString(xml.Header)
+	ec := xml.NewEncoder(file)
+
 	ec.Indent("", "   ")
 	if err := ec.Encode(xml_urls); err != nil {
 		panic(err)
 	}
 
-	fmt.Println()
+	fmt.Println(" XML File Generated...")
 
 }
